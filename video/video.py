@@ -3,10 +3,6 @@ import socket
 # Open the webcam at the primary camera device (0).
 capture = cv2.VideoCapture(0)
 
-HOST = "192.168.0.15"
-PORT = 65432
-soc = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-soc.connect((HOST, PORT))
 
 
 # Check if camera opened successfully
@@ -17,21 +13,20 @@ frame_count = 0
 while True:
     # Capture frame-by-frame
     ret, frame = capture.read()
-    data = soc.recv(1024)
-    if len(data)>0:
-        print(data)
-
+    file = open('../gps/latlong.dat', 'rb')
+    lat_long_str = file.read(500)
+    file.close()
+    print(lat_long_str)
     # If frame is read correctly, ret is True
     if not ret:
         print("Can't receive frame (stream end?). Exiting ...")
         break
 
-    # Draw a rectangle on frame
-    start_point = (50, 50)
-    end_point = (150, 150)
-    color = (0, 255, 0) # RGB color, here it's green
-    thickness = 2
-    frame = cv2.rectangle(frame, start_point, end_point, color, thickness)
+    # Draw a point on frame
+    point_position = (50, 50)  # You will need to replace this with your GPS to pixel conversion
+    color = (0, 255, 0)  # RGB color, here it's green
+    thickness = 5  # You can adjust the thickness to make the point larger or smaller
+    frame = cv2.circle(frame, point_position, thickness, color, -1)
 
     # Display the resulting frame
     cv2.imshow('Webcam Feed', frame)
