@@ -6,15 +6,6 @@ import math
 import os
 import json
 
-def parse_lat_long(lat_long_str):
-    degrees, rest = lat_long_str.split(' ')
-    minutes, direction = rest[:-1], rest[-1]
-    minutes = float(minutes)
-    lat_long_decimal = float(degrees) + minutes / 60
-    if direction in ['S', 'W']:
-        lat_long_decimal *= -1
-    return lat_long_decimal
-
 
 
 # Test mode
@@ -127,11 +118,24 @@ def calculate_bearing(pointA, pointB):
 
 
 while True:
+    print('\n')
     # Capture frame-by-frame
     ret, frame = capture.read()
 
     if not TEST_MODE:
         # Normal mode
+
+        #Read GPS Base Station Coordinates and Height from file
+
+        with open('../gps/basestation_data.dat', 'r') as file:
+            base_station_data_str = file.read()
+
+        base_station_data_dict = json.loads(base_station_data_str)
+
+        print(base_station_data_dict)
+        print(base_station_data_dict['latlong'])
+
+
         # Read GPS coordinates from file
         with open('../gps/latlong.dat', 'r') as file:
             data_str = file.read()
@@ -224,7 +228,7 @@ while True:
     elif key == ord('q'):
         # Quit if 'q' key is pressed
         break
-
+    print('\n')
     time.sleep(1)
 # After the loop release the capture object
 capture.release()
